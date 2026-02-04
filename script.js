@@ -1,5 +1,6 @@
 let form  = document.getElementById('txForm');
 let text = document.getElementById('txList');
+const transactions = [];
 
 form.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -7,7 +8,8 @@ form.addEventListener('submit', function(e) {
     let amountValue = document.getElementById('amount').value;
     let typeValue = document.getElementById('type').value;
     let categoryValue = document.getElementById('category').value; 
-
-    let transaction = `Date: ${dateValue}, Amount: ${amountValue}, Type: ${typeValue}, Category: ${categoryValue}\n`;
-    text.innerHTML += transaction;
+    
+    let newLine = document.createElement('li');
+    newLine.textContent = `Date: ${dateValue}, Amount: ${amountValue}, Type: ${typeValue}, Category: ${categoryValue}`;
+    text.appendChild(newLine);
 });

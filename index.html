@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="nl">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Budget Tracker</h1>
+
+    <div id="errorMessage" class="error-banner" style="display: none;"></div>
+
+    <form id="txForm">
+      <input type="hidden" id="editIndex" value="-1">
+      <div class="input-group">
+        <label for="date">Datum</label>
+        <input type="date" id="date" required>
+      </div>
+
+      <div class="input-group">
+        <label for="amount">Bedrag (€)</label>
+        <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+      </div>
+
+      <div class="input-group">
+        <label for="type">Type</label>
+        <select id="type">
+          <option value="expense">Uitgave</option>
+          <option value="income">Inkomst</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="category">Categorie</label>
+        <input type="text" id="category" placeholder="Bijv. Boodschappen" required>
+      </div>
+
+      <button type="submit">Transactie Toevoegen</button>
+    </form>
+
+    <div class="summary">
+      <div class="summary-item">
+        <h3>Inkomsten</h3>
+        <p id="incomeValue">€ 0.00</p>
+      </div>
+      <div class="summary-item">
+        <h3>Uitgaven</h3>
+        <p id="expenseValue">€ 0.00</p>
+      </div>
+    </div>
+
+    <ul id="txList">
+      <!-- Transacties komen hier -->
+    </ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

@@ -11,7 +11,7 @@
       padding: 20px;
       width: 400px;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(255, 77, 0, 0.5);
     }
 
     h1 {
@@ -33,14 +33,14 @@
       margin-bottom: 10px;
       border: none;
       border-radius: 5px;
-      background: #4CAF50;
+      background: rgb(255, 153, 0);
       color: white;
       font-size: 16px;
       cursor: pointer;
     }
 
     button:hover {
-      background: #45a049;
+      background: rgb(255, 166, 33);
     }
 
     .reset {
@@ -59,4 +59,12 @@
       font-family: monospace;
       font-size: 14px;
       white-space: pre-wrap;
+    }
+
+    .income {
+    color: green;
+  }
+
+    .expense {
+      color: red;
     }

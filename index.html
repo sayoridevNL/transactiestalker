@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <title>Budget Tracker</title>
+  </head>
 <body>
-    <h1>Big Bootie Latina</h1>
+
+  <div class="container">
+    <h1>Budget Tracker</h1>
+
+    <input type="text" id="description" placeholder="Omschrijving">
+    <input type="number" id="amount" placeholder="Bedrag">
+
+    <button onclick="addItem()">Toevoegen</button>
+    <button class="reset" onclick="resetItems()">Reset</button>
+
+    <div class="array-output" id="arrayOutput">
+      []
+    </div>
+  </div>
 </body>
+<script src="script.js"></script>
 </html>

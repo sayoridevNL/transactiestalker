@@ -1,111 +1,86 @@
-const form = document.getElementById('txForm');
-const txList = document.getElementById('txList');
-const incomeValue = document.getElementById('incomeValue');
-const expenseValue = document.getElementById('expenseValue');
-const errorMessage = document.getElementById('errorMessage');
-const editIndexInput = document.getElementById('editIndex');
+// 1. Get the main pieces from your HTML
+let form = document.getElementById('txForm');
+let txList = document.getElementById('txList');
+let editInput = document.getElementById('editIndex');
 
-let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+// 2. Load the list from the browser's memory
+let transactions = JSON.parse(localStorage.getItem('my_tasks')) || [];
 
-function saveData() {
-    localStorage.setItem('transactions', JSON.stringify(transactions));
-}
+// 3. The function that shows everything on the screen
+function showData() {
+    txList.innerHTML = ""; // Clear the list first
+    let income = 0;
+    let expense = 0;
 
-function showError(message) {
-    errorMessage.textContent = message;
-    errorMessage.style.display = 'block';
-    setTimeout(() => {
-        errorMessage.style.display = 'none';
-    }, 3000);
-}
+    for (let i = 0; i < transactions.length; i++) {
+        let item = transactions[i];
+        
+        // Add up the money
+        if (item.type === 'income') {
+            income = income + parseFloat(item.amount);
+        } else {
+            expense = expense + parseFloat(item.amount);
+        }
 
-function render() {
-    txList.innerHTML = '';
-    let totalIncome = 0;
-    let totalExpense = 0;
-
-    transactions.forEach((tx, index) => {
-        const amount = parseFloat(tx.amount);
-        if (tx.type === 'income') totalIncome += amount;
-        else totalExpense += amount;
-
-        const li = document.createElement('li');
-        li.className = 'transaction-item';
-        li.innerHTML = `
-      <div class="transaction-info">
-        <span class="transaction-category">${tx.category}</span>
-        <span class="transaction-date">${tx.date}</span>
-      </div>
-      <div class="transaction-actions">
-        <span class="transaction-amount ${tx.type === 'income' ? 'income-amount' : 'expense-amount'}">
-          ${tx.type === 'income' ? '+' : '-'} €${amount.toFixed(2)}
-        </span>
-        <button class="btn-icon btn-edit" title="Bewerken" onclick="editTransaction(${index})">
-          Edit
-        </button>
-        <button class="btn-icon btn-delete" title="Verwijderen" onclick="deleteTransaction(${index})">
-          Delete
-        </button>
-      </div>
-    `;
+        // Create a simple list item
+        let li = document.createElement('li');
+        
+        // Use simple parts to make the text
+        let text = item.category + ": €" + item.amount;
+        let buttons = ` <button onclick="edit(${i})">Edit</button> 
+                        <button onclick="del(${i})">X</button>`;
+        
+        li.innerHTML = text + buttons;
         txList.appendChild(li);
-    });
+    }
 
-    incomeValue.textContent = `€ ${totalIncome.toFixed(2)}`;
-    expenseValue.textContent = `€ ${totalExpense.toFixed(2)}`;
+    // Update the total display
+    document.getElementById('incomeValue').innerText = "€" + income;
+    document.getElementById('expenseValue').innerText = "€" + expense;
+    
+    // Save to memory
+    localStorage.setItem('my_tasks', JSON.stringify(transactions));
 }
 
-form.addEventListener('submit', function (e) {
-    e.preventDefault();
+// 4. Adding a new item
+form.onsubmit = function(event) {
+    event.preventDefault();
 
-    const date = document.getElementById('date').value;
-    const amount = parseFloat(document.getElementById('amount').value);
-    const type = document.getElementById('type').value;
-    const category = document.getElementById('category').value;
-    const editIndex = parseInt(editIndexInput.value);
+    let newItem = {
+        date: document.getElementById('date').value,
+        amount: document.getElementById('amount').value,
+        type: document.getElementById('type').value,
+        category: document.getElementById('category').value
+    };
 
-    // Validation
-    if (!date || isNaN(amount) || amount <= 0 || !category.trim()) {
-        showError('Vul alle velden geldig in. Bedrag moet groter zijn dan 0.');
-        return;
-    }
+    let index = editInput.value;
 
-    const transaction = { date, amount, type, category: category.trim() };
-
-    if (editIndex === -1) {
-        // Create
-        transactions.push(transaction);
+    if (index == -1) {
+        transactions.push(newItem); // Add new one
     } else {
-        // Update
-        transactions[editIndex] = transaction;
-        editIndexInput.value = -1;
-        form.querySelector('button[type="submit"]').textContent = 'Transactie Toevoegen';
+        transactions[index] = newItem; // Overwrite old one
+        editInput.value = -1; // Stop editing
     }
 
-    saveData();
-    render();
     form.reset();
-});
-
-window.deleteTransaction = function (index) {
-    if (confirm('Weet je zeker dat je deze transactie wilt verwijderen?')) {
-        transactions.splice(index, 1);
-        saveData();
-        render();
-    }
+    showData();
 };
 
-window.editTransaction = function (index) {
-    const tx = transactions[index];
-    document.getElementById('date').value = tx.date;
-    document.getElementById('amount').value = tx.amount;
-    document.getElementById('type').value = tx.type;
-    document.getElementById('category').value = tx.category;
-    editIndexInput.value = index;
-
-    form.querySelector('button[type="submit"]').textContent = 'Wijziging Opslaan';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+// 5. Delete and Edit functions
+window.del = function(i) {
+    transactions.splice(i, 1);
+    showData();
 };
 
-// Initial render
-render();
+window.edit = function(i) {
+    let item = transactions[i];
+    document.getElementById('date').value = item.date;
+    document.getElementById('amount').value = item.amount;
+    document.getElementById('type').value = item.type;
+    document.getElementById('category').value = item.category;
+    
+    editInput.value = i; // Tell the form we are editing
+};
+
+// Run the function when the page opens
+showData();

@@ -1,70 +1,309 @@
-   body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      display: flex;
-      justify-content: center;
-      padding: 40px;
-    }
+/* ============================================
+   Budget Tracker — Premium UI
+   ============================================ */
 
-    .container {
-      background: white;
-      padding: 20px;
-      width: 400px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(255, 77, 0, 0.5);
-    }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+/* ---------- Design Tokens ---------- */
+:root {
+  --clr-bg:        #0f1117;
+  --clr-surface:   #1a1d27;
+  --clr-surface-2: #23273a;
+  --clr-border:    rgba(255,255,255,0.07);
+  --clr-text:      #e8eaf6;
+  --clr-muted:     #8b92b8;
+  --clr-accent:    #ff9100;
+  --clr-accent-h:  #ffb347;
+  --clr-income:    #00e5a0;
+  --clr-expense:   #ff4e6a;
+  --clr-danger:    #ff4e6a;
+  --clr-danger-h:  #ff2244;
+  --radius-sm:     8px;
+  --radius-md:     14px;
+  --radius-lg:     20px;
+  --shadow-glow:   0 0 40px rgba(255,145,0,0.15);
+  --shadow-card:   0 8px 32px rgba(0,0,0,0.4);
+  --transition:    0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: none;
-      border-radius: 5px;
-      background: rgb(255, 153, 0);
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--clr-bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,145,0,0.12), transparent);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px 60px;
+  color: var(--clr-text);
+}
 
-    button:hover {
-      background: rgb(255, 166, 33);
-    }
+/* ---------- Container ---------- */
+.container {
+  background: var(--clr-surface);
+  width: 100%;
+  max-width: 480px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--clr-border);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
-    .reset {
-      background: #e74c3c;
-    }
+/* ---------- Heading ---------- */
+h1 {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-h));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-    .reset:hover {
-      background: #c0392b;
-    }
+/* ---------- Error Banner ---------- */
+.error-banner {
+  background: rgba(255, 78, 106, 0.12);
+  border: 1px solid rgba(255, 78, 106, 0.35);
+  color: var(--clr-expense);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
 
-    .array-output {
-      margin-top: 20px;
-      background: #f0f0f0;
-      padding: 10px;
-      border-radius: 5px;
-      font-family: monospace;
-      font-size: 14px;
-      white-space: pre-wrap;
-    }
+/* ---------- Form ---------- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-    .income {
-    color: green;
-  }
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
-    .expense {
-      color: red;
-    }
+label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--clr-muted);
+}
+
+input,
+select {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--clr-surface-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  color: var(--clr-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  appearance: none;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--clr-accent);
+  box-shadow: 0 0 0 3px rgba(255,145,0,0.18);
+}
+
+input::placeholder {
+  color: var(--clr-muted);
+  opacity: 0.6;
+}
+
+select option {
+  background: var(--clr-surface-2);
+  color: var(--clr-text);
+}
+
+/* ---------- Buttons ---------- */
+button {
+  padding: 11px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  letter-spacing: 0.02em;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Primary / submit */
+button[type="submit"] {
+  width: 100%;
+  background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-h));
+  color: #111;
+  box-shadow: 0 4px 18px rgba(255,145,0,0.35);
+  margin-top: 4px;
+}
+
+button[type="submit"]:hover {
+  box-shadow: 0 6px 24px rgba(255,145,0,0.5);
+  transform: translateY(-1px);
+}
+
+/* Reset / danger */
+.reset,
+button.reset {
+  background: rgba(255, 78, 106, 0.12);
+  color: var(--clr-expense);
+  border: 1px solid rgba(255,78,106,0.3);
+  width: 100%;
+}
+
+.reset:hover,
+button.reset:hover {
+  background: rgba(255, 78, 106, 0.22);
+  border-color: var(--clr-expense);
+}
+
+/* ---------- Summary Cards ---------- */
+.summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.summary-item {
+  background: var(--clr-surface-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.summary-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.summary-item h3 {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clr-muted);
+  margin-bottom: 8px;
+}
+
+.summary-item p {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* ---------- Income / Expense Colors ---------- */
+.income {
+  color: var(--clr-income);
+  text-shadow: 0 0 12px rgba(0,229,160,0.3);
+}
+
+.expense {
+  color: var(--clr-expense);
+  text-shadow: 0 0 12px rgba(255,78,106,0.3);
+}
+
+/* ---------- Transaction List ---------- */
+#txList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#txList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--clr-surface-2);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  gap: 10px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+#txList li:hover {
+  border-color: rgba(255,145,0,0.2);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+/* Inline edit/delete buttons inside li */
+#txList li button {
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  flex-shrink: 0;
+  width: auto;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* Edit button */
+#txList li button:first-of-type {
+  background: rgba(255,145,0,0.12);
+  color: var(--clr-accent);
+  border: 1px solid rgba(255,145,0,0.25);
+}
+
+#txList li button:first-of-type:hover {
+  background: rgba(255,145,0,0.22);
+  border-color: var(--clr-accent);
+}
+
+/* Delete button */
+#txList li button:last-of-type {
+  background: rgba(255,78,106,0.1);
+  color: var(--clr-expense);
+  border: 1px solid rgba(255,78,106,0.2);
+}
+
+#txList li button:last-of-type:hover {
+  background: rgba(255,78,106,0.22);
+  border-color: var(--clr-expense);
+}
+
+/* ---------- Array Output (legacy) ---------- */
+.array-output {
+  margin-top: 4px;
+  background: var(--clr-surface-2);
+  border: 1px solid var(--clr-border);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--clr-muted);
+  white-space: pre-wrap;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--clr-surface-2); border-radius: 99px; }

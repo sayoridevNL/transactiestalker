@@ -96,6 +96,22 @@
     </div>
 
     <div id="upcoming" class="tab-content">
+      <form id="upcomingForm">
+        <div class="input-group">
+          <label for="upName">Naam</label>
+          <input type="text" id="upName" placeholder="Bijv. Gemeentebelasting" required>
+        </div>
+        <div class="input-group">
+          <label for="upAmount">Bedrag (€)</label>
+          <input type="number" id="upAmount" step="0.01" placeholder="0.00" required>
+        </div>
+        <div class="input-group">
+          <label for="upDate">Datum</label>
+          <input type="date" id="upDate" required>
+        </div>
+        <button type="submit">Geplande Betaling Toevoegen</button>
+      </form>
+
       <div class="upcoming-summary">
         <h3>Komende 30 Dagen</h3>
         <p id="upcomingTotal">Totaal: € 0.00</p>

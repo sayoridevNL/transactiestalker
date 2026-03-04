@@ -14,7 +14,7 @@ function showData() {
 
     for (let i = 0; i < transactions.length; i++) {
         let item = transactions[i];
-        
+
         // Add up the money
         if (item.type === 'income') {
             income = income + parseFloat(item.amount);
@@ -24,12 +24,12 @@ function showData() {
 
         // Create a simple list item
         let li = document.createElement('li');
-        
+
         // Use simple parts to make the text
         let text = item.category + ": €" + item.amount;
         let buttons = ` <button onclick="edit(${i})">Edit</button> 
                         <button onclick="del(${i})">X</button>`;
-        
+
         li.innerHTML = text + buttons;
         txList.appendChild(li);
     }
@@ -37,13 +37,13 @@ function showData() {
     // Update the total display
     document.getElementById('incomeValue').innerText = "€" + income;
     document.getElementById('expenseValue').innerText = "€" + expense;
-    
+
     // Save to memory
     localStorage.setItem('my_tasks', JSON.stringify(transactions));
 }
 
 // 4. Adding a new item
-form.onsubmit = function(event) {
+form.onsubmit = function (event) {
     event.preventDefault();
 
     let newItem = {
@@ -67,20 +67,37 @@ form.onsubmit = function(event) {
 };
 
 // 5. Delete and Edit functions
-window.del = function(i) {
+window.del = function (i) {
     transactions.splice(i, 1);
     showData();
 };
 
-window.edit = function(i) {
+window.edit = function (i) {
     let item = transactions[i];
     document.getElementById('date').value = item.date;
     document.getElementById('amount').value = item.amount;
     document.getElementById('type').value = item.type;
     document.getElementById('category').value = item.category;
-    
+
     editInput.value = i; // Tell the form we are editing
 };
 
 // Run the function when the page opens
 showData();
+
+// 6. Tab Switching Logic
+document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const tabId = button.getAttribute('data-tab');
+
+        // Update buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
+    });
+});

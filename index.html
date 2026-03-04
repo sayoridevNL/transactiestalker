@@ -9,54 +9,102 @@
 </head>
 
 <body>
-  <div class="container">
+  <section class="container">
     <h1>Budget Tracker</h1>
+
+    <nav>
+      <button class="tab-btn active" data-tab="transactions">Transacties</button>
+      <button class="tab-btn" data-tab="subscriptions">Abonnementen</button>
+      <button class="tab-btn" data-tab="upcoming">Komende betalingen</button>
+    </nav>
 
     <div id="errorMessage" class="error-banner" style="display: none;"></div>
 
-    <form id="txForm">
-      <input type="hidden" id="editIndex" value="-1">
-      <div class="input-group">
-        <label for="date">Datum</label>
-        <input type="date" id="date" required>
+    <div id="transactions" class="tab-content active">
+      <form id="txForm">
+        <input type="hidden" id="editIndex" value="-1">
+        <div class="input-group">
+          <label for="date">Datum</label>
+          <input type="date" id="date" required>
+        </div>
+
+        <div class="input-group">
+          <label for="amount">Bedrag (€)</label>
+          <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+        </div>
+
+        <div class="input-group">
+          <label for="type">Type</label>
+          <select id="type">
+            <option value="expense">Uitgave</option>
+            <option value="income">Inkomst</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="category">Categorie</label>
+          <input type="text" id="category" placeholder="Bijv. Boodschappen" required>
+        </div>
+
+        <button type="submit">Transactie Toevoegen</button>
+      </form>
+
+      <div class="summary">
+        <div class="summary-item">
+          <h3>Inkomsten</h3>
+          <p id="incomeValue" class="income">€ 0.00</p>
+        </div>
+        <div class="summary-item">
+          <h3>Uitgaven</h3>
+          <p id="expenseValue" class="expense">€ 0.00</p>
+        </div>
       </div>
 
-      <div class="input-group">
-        <label for="amount">Bedrag (€)</label>
-        <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+      <ul id="txList">
+        <!-- Transacties komen hier -->
+      </ul>
+    </div>
+
+    <div id="subscriptions" class="tab-content">
+      <form id="subForm">
+        <input type="hidden" id="subEditIndex" value="-1">
+        <div class="input-group">
+          <label for="subName">Naam</label>
+          <input type="text" id="subName" placeholder="Bijv. Netflix" required>
+        </div>
+        <div class="input-group">
+          <label for="subAmount">Bedrag (€)</label>
+          <input type="number" id="subAmount" step="0.01" placeholder="0.00" required>
+        </div>
+        <div class="input-group">
+          <label for="subDate">Volgende afschrijving</label>
+          <input type="date" id="subDate" required>
+        </div>
+        <div class="input-group">
+          <label for="subInterval">Interval</label>
+          <select id="subInterval">
+            <option value="monthly">Maandelijks</option>
+            <option value="yearly">Jaarlijks</option>
+          </select>
+        </div>
+        <button type="submit">Abonnement Toevoegen</button>
+      </form>
+
+      <ul id="subList" class="premium-list">
+        <!-- Abonnementen komen hier -->
+      </ul>
+    </div>
+
+    <div id="upcoming" class="tab-content">
+      <div class="upcoming-summary">
+        <h3>Komende 30 Dagen</h3>
+        <p id="upcomingTotal">Totaal: € 0.00</p>
       </div>
-
-      <div class="input-group">
-        <label for="type">Type</label>
-        <select id="type">
-          <option value="expense">Uitgave</option>
-          <option value="income">Inkomst</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label for="category">Categorie</label>
-        <input type="text" id="category" placeholder="Bijv. Boodschappen" required>
-      </div>
-
-      <button type="submit">Transactie Toevoegen</button>
-    </form>
-
-    <div class="summary">
-  <div class="summary-item">
-    <h3>Inkomsten</h3>
-    <p id="incomeValue" class="income">€ 0.00</p>
-  </div>
-  <div class="summary-item">
-    <h3>Uitgaven</h3>
-    <p id="expenseValue" class="expense">€ 0.00</p>
-  </div>
-</div>
-
-    <ul id="txList">
-      <!-- Transacties komen hier -->
-    </ul>
-  </div>
+      <ul id="upcomingList" class="premium-list">
+        <!-- Komende betalingen komen hier -->
+      </ul>
+    </div>
+  </section>
 
   <script src="script.js"></script>
 </body>

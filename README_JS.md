@@ -1,128 +1,104 @@
-# 🧠 Budget Tracker - Ultieme JavaScript Gids
+# 💰 Budget Tracker: The Ultimate Technical Explainer
 
-Dit document is de definitieve bron voor het begrijpen van de technische implementatie van de Budget Tracker. Het biedt een diepe duik in de data-architectuur, algoritmen en interactie-logica.
+Welcome to the full documentation for the **Budget Tracker**. This application is a high-performance, client-side financial tool built to manage transactions, track recurring subscriptions, and forecast future expenses using a "Privacy-First" local architecture.
 
----
-
-## 🏗️ 1. Systeemarchitectuur
-
-De applicatie draait volledig in de browser (**Client-Side**). Er is geen externe database; alle statusbeschrijvingen worden opgeslagen in de `Window.localStorage` API.
-
-### Gegevensmodel (Data Schema)
-De app beheert drie primaire datastructuren in de vorm van JSON arrays:
-
-| Array | Object Eigenschappen | Doel |
-| :--- | :--- | :--- |
-| `transactions` | `date`, `amount`, `type`, `category` | De geschiedenis van voltooide acties. |
-| `subscriptions` | `name`, `amount`, `date`, `interval` | Definities voor terugkerende kosten. |
-| `oneOffUpcoming` | `name`, `amount`, `date` | Toekomstige kosten die één keer voorkomen. |
+If you are just starting with JavaScript, this guide will walk you through the core concepts used in this project.
 
 ---
 
-## 🔄 2. Data Flow Diagram
+## 🏗️ 1. Core Architecture: The Single Page Application (SPA)
 
-Hieronder zie je hoe data door het systeem vloeit bij een interactie:
+This app follows an **SPA (Single Page Application)** pattern. Instead of loading different `.html` files for every page, it stays on one page and uses JavaScript to swap views.
 
-```mermaid
-graph TD
-    A[Gebruiker voert data in] --> B{Formulier Submit}
-    B -->|Bestaand Item| C[Update Array Index]
-    B -->|Nieuw Item| D[Array.push]
-    C --> E[showData Functie]
-    D --> E
-    E --> F[Bereken Totalen]
-    E --> G[Sorteer Transacties]
-    E --> H[Sla op in LocalStorage]
-    E --> I[Update DOM / UI]
-    J[Gebruiker klikt 'Betaald'] --> K[Voeg toe aan Transactions]
-    K --> L[Update Sub Datum / Verwijder One-Off]
-    L --> E
-```
+### How Navigation Works (The DOM)
 
----
+The interface is divided into three areas: **Transacties**, **Abonnementen**, and **Komende betalingen**. We manage these by manipulating the **DOM (Document Object Model)**.
 
-## 🛠️ 3. Gedetailleerde Functie Analyse
-
-### `showData()` - De Centraal Beheerder
-Deze functie wordt aangeroepen bij ELKE wijziging. Het is een "idempotente" operatie: het zet de hele lijst opnieuw op basis van de huidige staat van de arrays.
-
-**Logica voor Transacties:**
-- **Sorteren**: `transactions.sort((a,b) => new Date(b.date) - new Date(a.date))`. Dit zorgt voor een aflopende chronologische volgorde (O(n log n) complexiteit).
-- **Template Literals**: We gebruiken backticks (`` ` ``) om dynamische HTML te genereren. Dit is veiliger en leesbaarder dan string concatenatie.
-
----
-
-### `showUpcoming()` - Het Projectie Algoritme
-Dit is de meest complexe functie in het script. Het moet "raden" wat er in de toekomst gaat gebeuren.
-
-1. **Windowing**: Het definieert een venster van 30 dagen: `nextMonth.setDate(today.getDate() + 30)`.
-2. **Subscription Projection Loop**:
-   ```javascript
-   while (d <= nextMonth) {
-       if (d >= today) {
-           items.push({ ... });
-       }
-       // Interval Verhoging
-       if (sub.interval === 'monthly') d.setMonth(d.getMonth() + 1);
-       else d.setFullYear(d.getFullYear() + 1);
-   }
-   ```
-   Dit algoritme zorgt ervoor dat een maandelijks abonnement dat morgen én over 29 dagen valt, BEIDE getoond worden in de lijst.
-
-3. **Relative Time Calculation**:
-   We berekenen het getal door milliseconden om te zetten naar dagen:
-   `diff = Math.ceil((item.date - today) / (1000 * 60 * 60 * 24))`
-
----
-
-### De "Pay" Logica: `paySub` en `payUpcoming`
-Wanneer een gebruiker een betaling bevestigt, gebeuren er drie dingen tegelijk:
-
-1. **Archivering**: De data wordt gekopieerd van de "geplande" staat naar de `transactions` array.
-2. **State Mutatie**:
-   - Bij een **Subscription**: De `date` eigenschap in de array wordt gemuteerd naar de volgende periode (ISO string format `YYYY-MM-DD`).
-   - Bij een **One-Off**: Het item wordt volledig verwijderd (`splice`).
-3. **UI Sync**: `showData()` wordt aangeroepen om de veranderingen over alle tabbladen heen te tonen.
-
----
-
-## ⌨️ 4. Formulier & State Management
-We maken gebruik van "Hidden Inputs" voor beheer van de bewerkingsmodus.
-
-```javascript
-let editInput = document.getElementById('editIndex'); // Waarde is -1 of een index
-```
-
-- **Update Pad**: Als `editInput.value !== -1`, dan doen we `transactions[index] = newItem`.
-- **Create Pad**: Als de waarde `-1` is, doen we `transactions.push(newItem)`.
-- **Reset**: Na elke succesvolle submit doen we `form.reset()` en zetten we de hidden input terug op `-1`.
-
----
-
-## 📱 5. Tab Systeem (UI Logica)
-Het tab-systeem is ontworpen om lichtgewicht te zijn zonder externe bibliotheek.
-
-```javascript
-document.querySelectorAll('.tab-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        // 1. Verwijder 'active' van alle knoppen en alle content secties
-        // 2. Voeg 'active' toe aan de huidige knop
-        // 3. Gebruik 'data-tab' attribuut om de doelsectie te vinden via ID
+* **The Mechanism:** Every tab button has a custom `data-tab` attribute (e.g., `data-tab="subscriptions"`).
+* **The Logic:** When clicked, a JavaScript `forEach` loop runs. It removes the `active` class from every content `div` and adds it only to the one you selected.
+* **The Code Concept:**
+    ```javascript
+    // We toggle visibility by adding/removing CSS classes
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.remove('active');
     });
-});
-```
-Dit maakt gebruik van CSS classes (`.active { display: flex; }`) om de zichtbaarheid te bepalen, wat sneller is dan direct manipuleren van de `style.display` eigenschap.
+    ```
 
 ---
 
-## 🛠️ 6. Technische Snippets & Best Practices
-In de code vind je diverse moderne JS technieken:
+## 💾 2. Local Storage: Your Browser's "Filing Cabinet"
 
-- **Arrow Functions**: Voor kortere, anonieme functies (bijv. in `forEach`).
-- **Short-circuit Evaluation**: `JSON.parse(...) || []` voor veilige defaults.
-- **Destructuring-achtige toegang**: Directe toegang tot object properties binnen loops.
-- **Locale Formatting**: `date.toLocaleDateString('nl-NL')` voor een Nederlandse datumweergave.
+Because this app has no database server, it uses the **Web Storage API**. This is a small storage space inside your browser that stays even if you refresh the page.
+
+### The Serialization Process
+
+Local Storage can **only store text (strings)**. It cannot store JavaScript Arrays or Objects directly. We use two methods to fix this:
+
+1.  **Saving (`JSON.stringify`):** Converts your Array of data into a long string of text.
+2.  **Loading (`JSON.parse`):** Converts that text back into a live JavaScript Array so we can calculate totals.
+
+**The Data Keys used in this app:**
+* `my_tasks`: Stores historical income and expenses.
+* `my_subs`: Stores subscription templates.
+* `my_upcomings`: Stores planned future payments.
 
 ---
 
-*Dit document dient als handleiding voor toekomstige uitbreidingen van de Transactiestalker codebase.*
+## 📝 3. The "Smart" Form Logic
+
+The app uses a clever trick to handle both **Adding** and **Editing** within the same form. This prevents us from having to write the same code twice.
+
+### The Hidden Index Trick
+
+In the HTML, we have a hidden input: `<input type="hidden" id="editIndex" value="-1">`.
+
+* **Adding:** When you submit, if the value is `-1`, the script knows this is new and uses `.push()` to add it to the list.
+* **Editing:** When you click "Edit," JavaScript fills the form with the old data and changes the `editIndex` to that item’s position (e.g., index `2`).
+* **The Save:** The script sees the `2`, recognizes you are editing, and overwrites the data at that specific spot in the array instead of creating a duplicate.
+
+---
+
+## 🔄 4. The Subscription Engine (`Abonnementen`)
+
+Subscriptions act as "Templates" for recurring costs. We use the **JavaScript Date Object** to handle the calendar math.
+
+### The "Pay" Mechanism
+When you click **"Betaald" (Paid)**:
+1.  **History:** The app copies the subscription data into your main transaction history.
+2.  **Date Math:** It checks the interval (`monthly` or `yearly`). It uses `.getMonth()` or `.getFullYear()`, adds `1`, and saves the new date back to the subscription.
+3.  **The Update:** The "Next Date" refreshes automatically so you're ready for next month.
+
+---
+
+## 🔮 5. The 30-Day Forecast (`Komende betalingen`)
+
+This is the most advanced logic in the app. It creates a **Virtual Timeline** of your financial future.
+
+### How the Projection Works:
+* **Scanning:** It looks at every subscription. If a billing date falls between **Today** and **30 Days from now**, it adds it to the list.
+* **Time Math:** JavaScript calculates the difference in **milliseconds** between "Now" and the "Due Date."
+* **Human Labels:** We divide those milliseconds to get days and display:
+    * 0 days = **Vandaag**
+    * 1 day = **Morgen**
+    * \>1 day = **Over X dagen**
+
+---
+
+## 🎨 6. UI/UX & Visual Styles
+
+The app uses a **High-Contrast Neon-Dark Theme** for clarity.
+
+* **Dynamic Summary:** The "Inkomsten" and "Uitgaven" boxes update in real-time using the `.reduce()` method to sum up your totals.
+* **Auto-Sorting:** We use `.sort()` to make sure your transactions always appear in order, even if you enter an old receipt today.
+* **Visual Cues:** CSS classes are added dynamically: Green for income, Pink/Red for expenses.
+
+---
+
+## 🛠️ 7. Maintenance & Troubleshooting
+
+### How to Reset the App
+If you want to clear all data and start fresh, open the **Browser Console** (`F12` or `Inspect` -> `Console`) and run:
+
+```javascript
+localStorage.clear();
+location.reload();

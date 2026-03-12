@@ -1,4 +1,3 @@
-// 1. Get the main pieces from your HTML
 let form = document.getElementById('txForm');
 let subForm = document.getElementById('subForm');
 let upcomingForm = document.getElementById('upcomingForm');
@@ -8,14 +7,11 @@ let upcomingList = document.getElementById('upcomingList');
 let editInput = document.getElementById('editIndex');
 let subEditInput = document.getElementById('subEditIndex');
 
-// 2. Load the list from the browser's memory
 let transactions = JSON.parse(localStorage.getItem('my_tasks')) || [];
 let subscriptions = JSON.parse(localStorage.getItem('my_subs')) || [];
 let oneOffUpcoming = JSON.parse(localStorage.getItem('my_upcomings')) || [];
 
-// 3. The function that shows everything on the screen
 function showData() {
-    // --- Transactions ---
     txList.innerHTML = "";
     let income = 0;
     let expense = 0;
@@ -44,7 +40,6 @@ function showData() {
     document.getElementById('incomeValue').innerText = "€ " + income.toFixed(2);
     document.getElementById('expenseValue').innerText = "€ " + expense.toFixed(2);
 
-    // --- Subscriptions ---
     subList.innerHTML = "";
     subscriptions.forEach((sub, i) => {
         let li = document.createElement('li');
@@ -62,10 +57,8 @@ function showData() {
         subList.appendChild(li);
     });
 
-    // --- Upcoming ---
     showUpcoming();
 
-    // Save to memory
     localStorage.setItem('my_tasks', JSON.stringify(transactions));
     localStorage.setItem('my_subs', JSON.stringify(subscriptions));
     localStorage.setItem('my_upcomings', JSON.stringify(oneOffUpcoming));
@@ -81,7 +74,6 @@ function showUpcoming() {
 
     let items = [];
 
-    // Add subscriptions projected for next 30 days
     subscriptions.forEach((sub, subIdx) => {
         let d = new Date(sub.date);
         while (d <= nextMonth) {
@@ -93,7 +85,6 @@ function showUpcoming() {
         }
     });
 
-    // Add one-offs
     oneOffUpcoming.forEach((up, upIdx) => {
         let d = new Date(up.date);
         if (d <= nextMonth) {
@@ -129,7 +120,6 @@ function showUpcoming() {
     document.getElementById('upcomingTotal').innerText = `Totaal komende 30 dagen: € ${total.toFixed(2)}`;
 }
 
-// 4. Forms
 form.onsubmit = function (event) {
     event.preventDefault();
     let newItem = {
@@ -180,7 +170,6 @@ if (upcomingForm) {
     };
 }
 
-// 5. Delete, Edit and Pay functions
 window.del = (i) => { transactions.splice(i, 1); showData(); };
 window.edit = (i) => {
     let item = transactions[i];
@@ -230,7 +219,6 @@ window.payUpcoming = (i) => {
 
 window.delUpcoming = (i) => { oneOffUpcoming.splice(i, 1); showData(); };
 
-// 6. Tab Switching Logic
 document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', () => {
         const tabId = button.getAttribute('data-tab');

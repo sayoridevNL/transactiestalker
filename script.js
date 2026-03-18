@@ -11,6 +11,45 @@ let transactions = JSON.parse(localStorage.getItem('my_tasks')) || [];
 let subscriptions = JSON.parse(localStorage.getItem('my_subs')) || [];
 let oneOffUpcoming = JSON.parse(localStorage.getItem('my_upcomings')) || [];
 
+const state = {
+ transactions: []
+};
+function handleUpload() {
+ const fileInput = document.getElementById("fileInput");
+ const file = fileInput.files[0];
+ if (!file) {
+ alert("Selecteer eerst een Excel bestand");
+ return;
+ }
+
+ const reader = new FileReader();
+    reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(sheet);
+    jsonData.forEach(item => {
+    state.transactions.push(item);
+ });
+
+ renderTransactions();
+ };
+
+ reader.readAsArrayBuffer(file);
+}
+
+function renderTransactions() {
+ const output = document.getElementById("output");
+ output.innerHTML = "";
+ state.transactions.forEach(t => {
+ const li = document.createElement("li");
+ li.textContent = `${t.date} - €${t.amount} - ${t.type}`;
+ output.appendChild(li);
+
+ });
+}
+
 function showData() {
     txList.innerHTML = "";
     let income = 0;

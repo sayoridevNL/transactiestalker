@@ -235,7 +235,6 @@ li {
   border: 1px solid var(--clr-border);
 }
 
-/* ---------- Utilities ---------- */
 .income {
   color: var(--clr-income);
 }
@@ -247,6 +246,14 @@ li {
 .error-banner {
   background: rgba(255, 78, 106, 0.1);
   color: var(--clr-expense);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.submit{
+  background: #39ff14;
   padding: 10px;
   border-radius: 8px;
   font-size: 0.85rem;

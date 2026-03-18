@@ -20,6 +20,11 @@
 
     <div id="errorMessage" class="error-banner" style="display: none;"></div>
 
+<input type="file" id="fileInput" accept=".xlsx, .xls">
+  <button class="submit" onclick="handleUpload()">Upload</button>
+  <ul id="output"></ul>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
     <div id="transactions" class="tab-content active">
       <form id="txForm">
         <input type="hidden" id="editIndex" value="-1">

@@ -20,10 +20,13 @@
 
     <div id="errorMessage" class="error-banner" style="display: none;"></div>
 
-<input type="file" id="fileInput" accept=".xlsx, .xls">
-  <button class="submit" onclick="handleUpload()">Upload</button>
-  <ul id="output"></ul>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+      <input type="file" id="fileInput" accept=".xlsx, .xls" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--clr-border); background: var(--clr-surface-2); color: var(--clr-text);">
+      <button class="submit" onclick="handleUpload()">Importeer</button>
+      <button class="submit" onclick="exportToExcel()" style="background: #217346; color: white;">Exporteer .xlsx</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
     <div id="transactions" class="tab-content active">
       <form id="txForm">
@@ -66,8 +69,7 @@
       </div>
 
       <ul id="txList">
-        <!-- Transacties komen hier -->
-      </ul>
+        </ul>
     </div>
 
     <div id="subscriptions" class="tab-content">
@@ -96,8 +98,7 @@
       </form>
 
       <ul id="subList" class="premium-list">
-        <!-- Abonnementen komen hier -->
-      </ul>
+        </ul>
     </div>
 
     <div id="upcoming" class="tab-content">
@@ -122,8 +123,7 @@
         <p id="upcomingTotal">Totaal: € 0.00</p>
       </div>
       <ul id="upcomingList" class="premium-list">
-        <!-- Komende betalingen komen hier -->
-      </ul>
+        </ul>
     </div>
   </section>
 

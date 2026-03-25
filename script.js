@@ -11,45 +11,59 @@ let transactions = JSON.parse(localStorage.getItem('my_tasks')) || [];
 let subscriptions = JSON.parse(localStorage.getItem('my_subs')) || [];
 let oneOffUpcoming = JSON.parse(localStorage.getItem('my_upcomings')) || [];
 
-const state = {
- transactions: []
-};
+// --- IMPORT EXCEL ---
 function handleUpload() {
- const fileInput = document.getElementById("fileInput");
- const file = fileInput.files[0];
- if (!file) {
- alert("Selecteer eerst een Excel bestand");
- return;
- }
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert("Selecteer eerst een Excel bestand");
+        return;
+    }
 
- const reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = function(e) {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: "array" });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const jsonData = XLSX.utils.sheet_to_json(sheet);
-    jsonData.forEach(item => {
-    state.transactions.push(item);
- });
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        
+        // Zet Excel om naar JSON
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        
+        // Loop door de nieuwe data en voeg toe aan onze hoofd-array
+        jsonData.forEach(item => {
+            transactions.push({
+                date: item.date || item.Datum || new Date().toISOString().split('T')[0],
+                amount: item.amount || item.Bedrag || 0,
+                type: item.type || item.Type || 'expense',
+                category: item.category || item.Categorie || 'Geïmporteerd'
+            });
+        });
 
- renderTransactions();
- };
+        // Update het scherm en sla op
+        showData(); 
+        fileInput.value = ""; // Maak het input veld weer leeg
+        alert("Bestand succesvol geïmporteerd!");
+    };
 
- reader.readAsArrayBuffer(file);
+    reader.readAsArrayBuffer(file);
 }
 
-function renderTransactions() {
- const output = document.getElementById("output");
- output.innerHTML = "";
- state.transactions.forEach(t => {
- const li = document.createElement("li");
- li.textContent = `${t.date} - €${t.amount} - ${t.type}`;
- output.appendChild(li);
+// --- EXPORT EXCEL ---
+function exportToExcel() {
+    if (transactions.length === 0) {
+        alert("Er zijn geen transacties om te exporteren.");
+        return;
+    }
 
- });
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(transactions);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Transacties");
+    XLSX.writeFile(workbook, "Mijn_Budget_Transacties.xlsx");
 }
 
+// --- RENDER FUNCTIES ---
 function showData() {
     txList.innerHTML = "";
     let income = 0;
@@ -159,6 +173,7 @@ function showUpcoming() {
     document.getElementById('upcomingTotal').innerText = `Totaal komende 30 dagen: € ${total.toFixed(2)}`;
 }
 
+// --- EVENT LISTENERS ---
 form.onsubmit = function (event) {
     event.preventDefault();
     let newItem = {
@@ -209,6 +224,7 @@ if (upcomingForm) {
     };
 }
 
+// --- ACTIES ---
 window.del = (i) => { transactions.splice(i, 1); showData(); };
 window.edit = (i) => {
     let item = transactions[i];
@@ -258,6 +274,7 @@ window.payUpcoming = (i) => {
 
 window.delUpcoming = (i) => { oneOffUpcoming.splice(i, 1); showData(); };
 
+// --- TAB NAVIGATIE ---
 document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', () => {
         const tabId = button.getAttribute('data-tab');
@@ -268,4 +285,5 @@ document.querySelectorAll('.tab-btn').forEach(button => {
     });
 });
 
+// Start de app
 showData();
